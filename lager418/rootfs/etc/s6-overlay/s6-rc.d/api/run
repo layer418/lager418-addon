@@ -12,7 +12,7 @@ export ANTHROPIC_API_KEY="$(bashio::config 'anthropic_key')"
 export LOG_LEVEL="$(bashio::config 'log_level')"
 
 # s6 dependencies order startup, they do not wait for readiness.
-until pg_isready -q -h 127.0.0.1 -U lager; do
+until pg_isready -q -h 127.0.0.1 -U lager -d postgres; do
     bashio::log.info "waiting for postgres…"
     sleep 1
 done

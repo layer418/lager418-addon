@@ -2,8 +2,10 @@
 # Cluster lives in /data — the only directory Supervisor persists per add-on.
 PGDATA=/data/pg
 
-mkdir -p "${PGDATA}" /data/photos
-chown postgres:postgres "${PGDATA}" /data/photos
+# /run/postgresql is where the unix socket and its lock file go. It does not
+# survive a container restart, so recreate it every boot or postgres FATALs.
+mkdir -p "${PGDATA}" /data/photos /run/postgresql
+chown postgres:postgres "${PGDATA}" /data/photos /run/postgresql
 chmod 700 "${PGDATA}"
 
 if [ ! -s "${PGDATA}/PG_VERSION" ]; then

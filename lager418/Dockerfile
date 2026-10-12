@@ -7,7 +7,8 @@ ARG WEB_VERSION
 ARG API_IMAGE=ghcr.io/layer418/lager418-api
 ARG WEB_IMAGE=ghcr.io/layer418/lager418-web
 
-# Artifact images, not runnable on their own: compiled dist + deps, FROM scratch.
+# The app repos' own release images (published by their bump prod CI on a v*
+# tag) — this add-on only lifts /app out of them, it never runs them.
 # --platform=$BUILDPLATFORM because the payload is pure JS — no native modules
 # in either tree today, so one amd64 build serves every target arch.
 # ponytail: add a native dep and this must become a real multi-arch pull.
@@ -21,7 +22,7 @@ FROM ${BUILD_FROM}
 RUN apk add --no-cache nodejs postgresql17 postgresql17-client
 
 COPY --from=api /app /opt/api
-COPY --from=web /app /opt/web
+COPY --from=web /app/.output /opt/web/.output
 COPY rootfs /
 
 LABEL io.hass.type="addon"
