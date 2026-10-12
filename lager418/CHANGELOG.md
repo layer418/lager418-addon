@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+- Das Foto aus dem Anlege-Assistenten wird jetzt gespeichert und am
+  Bauteil angezeigt — vorher ging es nach der KI-Erkennung verloren und
+  die Detailseite zeigte nur einen Platzhalter (api v0.1.5, web v0.4.6).
+
 ## 0.1.4
 
 - Teile lassen sich ohne Foto anlegen — der Assistent startet jetzt auch
