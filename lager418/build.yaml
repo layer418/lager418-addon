@@ -5,4 +5,4 @@ build_from:
 # v-prefixed: that is what the app repos' prod CI tags their images with.
 args:
   API_VERSION: "v0.1.8"
-  WEB_VERSION: "v0.4.19"
+  WEB_VERSION: "v0.4.20"
