@@ -28,6 +28,43 @@ uploaded photos in `/data/photos`. Both are included in Home Assistant
 backups and both are **deleted when the add-on is uninstalled**. Take a
 backup before uninstalling.
 
+## Sensors and automations
+
+If an MQTT broker is installed (the Mosquitto add-on), LAGER418 registers
+itself through MQTT discovery — no YAML, no restart. You get one device per
+workshop with six sensors:
+
+| Sensor | What it is |
+|---|---|
+| Teile | number of part records |
+| Bestand | sum of all quantities |
+| Lagerwert | stock value in EUR |
+| Nachbestellen | parts below their minimum quantity |
+| Verliehen | tools currently lent out |
+| Aktive Projekte | projects in status `active` |
+
+Plus an **Aktivität** event entity that fires on every change
+(`parts.created`, `parts.movement`, `boxes.parts_moved`, …) with the
+changed record as attributes — that is the one to trigger automations off:
+
+```yaml
+automation:
+  - triggers:
+      - trigger: state
+        entity_id: sensor.lager418_low_stock
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.lager418_low_stock
+        above: 0
+    actions:
+      - action: notify.persistent_notification
+        data:
+          message: "{{ states('sensor.lager418_low_stock') }} Teile nachbestellen"
+```
+
+Without a broker the add-on starts and runs exactly as before, it just
+publishes nothing.
+
 ## Lending between workshops
 
 Connecting to another LAGER418 instance needs that instance to be reachable

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3
+
+- HA sensors: six per workshop plus an activity event entity, over MQTT
+  discovery. Needs an MQTT broker; without one nothing changes.
+- Fix a provisioning race that threw duplicate-key errors on the first page
+  load, and return a readable 400 instead of a 500 when a part references a
+  box that does not exist (api v0.1.4).
+
 ## 0.1.2
 
 - Fix the blank page: the SPA shell's absolute `/_nuxt/` asset URLs 404'd

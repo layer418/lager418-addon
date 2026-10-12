@@ -11,6 +11,18 @@ export STORAGE_DIR=/data/photos
 export ANTHROPIC_API_KEY="$(bashio::config 'anthropic_key')"
 export LOG_LEVEL="$(bashio::config 'log_level')"
 
+# mqtt:want — the add-on runs fine without a broker, it just publishes no
+# sensors. Credentials come from the Supervisor, nothing to configure.
+if bashio::services.available "mqtt"; then
+    export MQTT_HOST="$(bashio::services mqtt 'host')"
+    export MQTT_PORT="$(bashio::services mqtt 'port')"
+    export MQTT_USER="$(bashio::services mqtt 'username')"
+    export MQTT_PASSWORD="$(bashio::services mqtt 'password')"
+    bashio::log.info "mqtt broker at ${MQTT_HOST}:${MQTT_PORT} — publishing HA sensors"
+else
+    bashio::log.info "no mqtt broker — HA sensors disabled"
+fi
+
 # s6 dependencies order startup, they do not wait for readiness.
 until pg_isready -q -h 127.0.0.1 -U lager -d postgres; do
     bashio::log.info "waiting for postgres…"
