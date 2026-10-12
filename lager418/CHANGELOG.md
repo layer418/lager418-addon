@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4
+
+- Teile lassen sich ohne Foto anlegen — der Assistent startet jetzt auch
+  ohne Kamera.
+- Kein vorausgefüllter Lagerort mehr, der auf einer frischen Instanz gar
+  nicht existiert (web v0.4.5).
+
 ## 0.1.3
 
 - HA sensors: six per workshop plus an activity event entity, over MQTT
