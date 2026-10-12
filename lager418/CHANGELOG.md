@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7
+
+- App-Update: api v0.1.6, web v0.4.7.
+
 ## 0.1.6
 
 - Das Foto aus dem Anlege-Assistenten wird jetzt gespeichert und am
