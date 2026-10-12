@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.1.7
+## 0.1.8
 
-- App-Update: api v0.1.6, web v0.4.7.
+- App-Update: api v0.1.6, web v0.4.7. (0.1.7 wurde nie als Image
+  veröffentlicht — die Release-Pipeline baute den Stand vor dem Bump.)
 
 ## 0.1.6
 
