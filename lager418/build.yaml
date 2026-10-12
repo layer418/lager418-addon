@@ -1,7 +1,7 @@
-# ponytail: :latest until the first green build tells us a real tag; pin then.
+# Multi-arch (arm64 + amd64). No :latest tag exists on this repo — pin it.
 build_from:
-  aarch64: ghcr.io/hassio-addons/base:latest
-  amd64: ghcr.io/hassio-addons/base:latest
+  aarch64: ghcr.io/hassio-addons/base:21.0.8
+  amd64: ghcr.io/hassio-addons/base:21.0.8
 args:
   API_VERSION: "0.1.0"
   WEB_VERSION: "0.1.0"
