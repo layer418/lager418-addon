@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.5
+## 0.1.6
 
 - Das Foto aus dem Anlege-Assistenten wird jetzt gespeichert und am
   Bauteil angezeigt — vorher ging es nach der KI-Erkennung verloren und
