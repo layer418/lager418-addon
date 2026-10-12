@@ -1,0 +1,45 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, amd64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Push only on a tag; everything else is a build-only smoke test.
+      - name: Set publish flag
+        id: flags
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            echo "test=" >> "$GITHUB_OUTPUT"
+          else
+            echo "test=--test" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: home-assistant/builder@master
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target /data/lager418 \
+            --image "lager418-{arch}" \
+            --docker-hub "ghcr.io/layer418" \
+            --addon ${{ steps.flags.outputs.test }}

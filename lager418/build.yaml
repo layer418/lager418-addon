@@ -1,0 +1,7 @@
+# ponytail: :latest until the first green build tells us a real tag; pin then.
+build_from:
+  aarch64: ghcr.io/hassio-addons/base:latest
+  amd64: ghcr.io/hassio-addons/base:latest
+args:
+  API_VERSION: "0.1.0"
+  WEB_VERSION: "0.1.0"

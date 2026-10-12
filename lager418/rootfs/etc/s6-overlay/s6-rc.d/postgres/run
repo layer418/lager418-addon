@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bashio
+# Cluster lives in /data — the only directory Supervisor persists per add-on.
+PGDATA=/data/pg
+
+mkdir -p "${PGDATA}" /data/photos
+chown postgres:postgres "${PGDATA}" /data/photos
+chmod 700 "${PGDATA}"
+
+if [ ! -s "${PGDATA}/PG_VERSION" ]; then
+    bashio::log.info "initialising postgres cluster in ${PGDATA}"
+    s6-setuidgid postgres initdb -D "${PGDATA}" -U lager --encoding=UTF8 --auth=trust
+fi
+
+# Loopback only + trust auth: nothing outside this container can reach it,
+# so there is no password worth managing.
+exec s6-setuidgid postgres \
+    postgres -D "${PGDATA}" -c listen_addresses=127.0.0.1 -c port=5432

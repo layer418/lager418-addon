@@ -1,0 +1,29 @@
+#!/usr/bin/with-contenv bashio
+cd /opt/api || bashio::exit.nok "api payload missing"
+
+export PORT=4000
+export DATABASE_URL="postgres://lager@127.0.0.1:5432/lager418"
+export CORS_ORIGINS=""
+# HA ingress already authenticated the user; trust its headers instead of OIDC.
+export AUTH_MODE=ingress
+export STORAGE_DRIVER=local
+export STORAGE_DIR=/data/photos
+export ANTHROPIC_API_KEY="$(bashio::config 'anthropic_key')"
+export LOG_LEVEL="$(bashio::config 'log_level')"
+
+# s6 dependencies order startup, they do not wait for readiness.
+until pg_isready -q -h 127.0.0.1 -U lager; do
+    bashio::log.info "waiting for postgres…"
+    sleep 1
+done
+
+if ! psql -h 127.0.0.1 -U lager -d postgres -tAc \
+        "SELECT 1 FROM pg_database WHERE datname='lager418'" | grep -q 1; then
+    bashio::log.info "creating database lager418"
+    createdb -h 127.0.0.1 -U lager lager418
+fi
+
+# migrate.js reads ./drizzle relative to cwd — hence the cd above.
+node dist/scripts/migrate.js || bashio::exit.nok "migrations failed"
+
+exec node dist/main.js
