@@ -19,6 +19,7 @@ jobs:
       contents: write
     outputs:
       changed: ${{ steps.bump.outputs.changed }}
+      tag: ${{ steps.bump.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -62,6 +63,7 @@ jobs:
           git tag "v$version"
           git push origin HEAD --tags
           echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
   build:
     needs: bump
@@ -72,3 +74,4 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       publish: true
+      ref: ${{ needs.bump.outputs.tag }}

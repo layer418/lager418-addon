@@ -10,6 +10,11 @@ on:
       publish:
         type: boolean
         default: false
+      # release.yaml commits the bump *after* this run started, so without an
+      # explicit ref we would build the pre-bump tree.
+      ref:
+        type: string
+        default: ''
 
 jobs:
   build:
@@ -23,6 +28,8 @@ jobs:
         arch: [aarch64, amd64]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - uses: docker/login-action@v3
         with:
