@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.30
+
+- App-Update: api v0.1.10, web v0.4.26.
+
 ## 0.1.29
 
 - App-Update: api v0.1.10, web v0.4.25.
