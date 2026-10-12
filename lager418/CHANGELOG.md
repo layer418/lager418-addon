@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Fix the blank page: the SPA shell's absolute `/_nuxt/` asset URLs 404'd
+  behind the ingress path prefix (web v0.4.4).
+
 ## 0.1.1
 
 - Create `/run/postgresql` on every boot — postgres FATAL'd in a restart loop
