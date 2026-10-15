@@ -24,7 +24,17 @@ map:
   - share:rw
 options:
   anthropic_key: ""
+  jev_api_key: ""
+  federation_enabled: false
+  federation_allow_private: false
   log_level: info
 schema:
-  anthropic_key: password
+  anthropic_key: password?
+  anthropic_vision_model: str?
+  jev_api_key: password?
+  # Opens /api/federation/* to other hosts. base_url is required when enabled,
+  # the API refuses to boot otherwise.
+  federation_enabled: bool
+  federation_base_url: url?
+  federation_allow_private: bool
   log_level: list(trace|debug|info|notice|warning|error|fatal)

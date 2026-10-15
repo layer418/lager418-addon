@@ -8,8 +8,25 @@ export CORS_ORIGINS=""
 export AUTH_MODE=ingress
 export STORAGE_DRIVER=local
 export STORAGE_DIR=/data/photos
-export ANTHROPIC_API_KEY="$(bashio::config 'anthropic_key')"
 export LOG_LEVEL="$(bashio::config 'log_level')"
+
+# Optional keys: bashio::config prints "null" for an unset option, and the API
+# treats an empty string as "feature off" — so only export what is actually set.
+for opt in anthropic_key:ANTHROPIC_API_KEY \
+           anthropic_vision_model:ANTHROPIC_VISION_MODEL \
+           jev_api_key:JEV_API_KEY \
+           federation_base_url:FEDERATION_BASE_URL; do
+    if bashio::config.has_value "${opt%%:*}"; then
+        export "${opt##*:}=$(bashio::config "${opt%%:*}")"
+    fi
+done
+
+export FEDERATION_ENABLED="$(bashio::config 'federation_enabled')"
+export FEDERATION_ALLOW_PRIVATE="$(bashio::config 'federation_allow_private')"
+if bashio::config.true 'federation_enabled' \
+        && ! bashio::config.has_value 'federation_base_url'; then
+    bashio::exit.nok "federation_enabled requires federation_base_url"
+fi
 
 # mqtt:want — the add-on runs fine without a broker, it just publishes no
 # sensors. Credentials come from the Supervisor, nothing to configure.

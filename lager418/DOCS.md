@@ -13,6 +13,11 @@ Then open **Lager** from the sidebar.
 | Option | Meaning |
 | --- | --- |
 | `anthropic_key` | API key for photo classification during ingest. Leave empty to disable the AI step — everything else works without it. |
+| `anthropic_vision_model` | Vision model used for that step. Empty = the app default. |
+| `jev_api_key` | TypeSafe/Jev key. Empty hides the dynamic-insert refine step in the UI. |
+| `federation_enabled` | Expose `/api/federation/*` so other LAGER418 hosts can browse shared parts and run transfers. Off by default. |
+| `federation_base_url` | The URL peers reach this instance on. Required when federation is enabled. |
+| `federation_allow_private` | Accept peer URLs on loopback/LAN. Needed for LAN-only pairing, never for a publicly exposed instance. |
 | `log_level` | Add-on log verbosity. |
 
 ## Users
