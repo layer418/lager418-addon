@@ -20,7 +20,7 @@ Then open **Lager** from the sidebar.
 | `federation_allow_private` | Accept peer URLs on loopback/LAN. Needed for LAN-only pairing, never for a publicly exposed instance. |
 | `searxng_url` | SearXNG instance used by the research agent. Empty hides the Recherchieren button. |
 | `research_base_url` | OpenAI-compatible chat endpoint for the research agent. Empty hides the button. |
-| `research_api_key` | Key for that endpoint. |
+| `research_api_key` | Key for that endpoint. Leer lassen für ein lokales Modell ohne Schlüssel (Ollama, vLLM). |
 | `research_model` | Model id to use, e.g. `gpt-4o-mini` or `qwen2.5:14b`. |
 | `log_level` | Add-on log verbosity. |
 
@@ -60,7 +60,9 @@ ein lokales Ollama bzw. vLLM. Dazu `research_api_key` und `research_model`. Das
 Modell muss Tool-Calling beherrschen; sehr kleine lokale Modelle tun sich damit
 schwer.
 
-Sind nicht alle vier Optionen gesetzt, erscheint der Knopf gar nicht erst.
+Fehlt eines von `searxng_url`, `research_base_url` oder `research_model`,
+erscheint der Knopf gar nicht erst; das Add-on-Log nennt dann, welche Option
+fehlt.
 
 Hinweis zur Sicherheit: Das Modell wählt selbst aus, welche Seiten gelesen
 werden. Adressen im eigenen Netz werden dabei grundsätzlich abgelehnt —
