@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.56
+
+- Bauteil-Recherche: neue Optionen `searxng_url`, `research_base_url`,
+  `research_api_key`, `research_model`. Ohne sie bleibt der Knopf verborgen.
+
 ## 0.1.55
 
 - App-Update: api v0.1.16, web v0.4.47.
