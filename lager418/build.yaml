@@ -4,5 +4,5 @@ build_from:
   amd64: ghcr.io/hassio-addons/base:21.0.8
 # v-prefixed: that is what the app repos' prod CI tags their images with.
 args:
-  API_VERSION: "v0.1.13"
-  WEB_VERSION: "v0.4.42"
+  API_VERSION: "v0.1.16"
+  WEB_VERSION: "v0.4.47"
