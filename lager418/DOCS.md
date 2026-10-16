@@ -18,7 +18,54 @@ Then open **Lager** from the sidebar.
 | `federation_enabled` | Expose `/api/federation/*` so other LAGER418 hosts can browse shared parts and run transfers. Off by default. |
 | `federation_base_url` | The URL peers reach this instance on. Required when federation is enabled. |
 | `federation_allow_private` | Accept peer URLs on loopback/LAN. Needed for LAN-only pairing, never for a publicly exposed instance. |
+| `searxng_url` | SearXNG instance used by the research agent. Empty hides the Recherchieren button. |
+| `research_base_url` | OpenAI-compatible chat endpoint for the research agent. Empty hides the button. |
+| `research_api_key` | Key for that endpoint. |
+| `research_model` | Model id to use, e.g. `gpt-4o-mini` or `qwen2.5:14b`. |
 | `log_level` | Add-on log verbosity. |
+
+## Bauteil-Recherche
+
+Der Knopf **Recherchieren** auf einer Bauteilseite sucht im Web nach Foto,
+Datenblatt, Hersteller, Herstellernummer und Preis und schlägt die Funde zur
+Übernahme vor. Übernommen wird nur, was angehakt wird; jeder Lauf bleibt als
+Protokoll am Bauteil stehen.
+
+Dafür braucht er zwei Dinge:
+
+**1. Eine Suchmaschine.** Installiere ein SearXNG-Add-on und trage seine Adresse
+unter `searxng_url` ein. Zwei Stolpersteine:
+
+- *Die Adresse.* Add-ons erreichen einander unter einem Hostnamen, den der
+  Supervisor vergibt — er enthält einen Präfix, der vom Repository abhängt, und
+  ist deshalb bei jeder Installation anders. Den richtigen Wert zeigt
+  `ha addons info <slug>` unter `hostname`, oder die Info-Seite des Add-ons.
+  Er sieht aus wie `http://<präfix>-searxng:8080`.
+- *Das JSON-Format.* SearXNG liefert standardmäßig **nur HTML**. In
+  `addon_configs/.../settings.yml` muss `json` in der Formatliste stehen:
+
+  ```yaml
+  search:
+    formats:
+      - html
+      - json
+  ```
+
+  Fehlt es, kommt auf jede Suche eine HTML-Seite zurück und jeder Lauf bricht
+  mit einem Suchfehler im Protokoll ab.
+
+**2. Ein Sprachmodell.** `research_base_url` zeigt auf einen beliebigen
+OpenAI-kompatiblen Endpunkt — OpenAI, OpenRouter, Groq, Mistral, Together, oder
+ein lokales Ollama bzw. vLLM. Dazu `research_api_key` und `research_model`. Das
+Modell muss Tool-Calling beherrschen; sehr kleine lokale Modelle tun sich damit
+schwer.
+
+Sind nicht alle vier Optionen gesetzt, erscheint der Knopf gar nicht erst.
+
+Hinweis zur Sicherheit: Das Modell wählt selbst aus, welche Seiten gelesen
+werden. Adressen im eigenen Netz werden dabei grundsätzlich abgelehnt —
+`searxng_url` ist davon ausgenommen, weil es aus der Konfiguration stammt und
+nicht vom Modell.
 
 ## Users
 
