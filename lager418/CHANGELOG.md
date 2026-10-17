@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.63
+
+- App-Update: api v0.1.18, web v0.4.49.
+
 ## 0.1.62
 
 - `searxng_url` und `research_base_url` stehen wieder in der Optionsliste.
