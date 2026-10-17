@@ -25,6 +25,10 @@ for opt in anthropic_key:ANTHROPIC_API_KEY \
     fi
 done
 
+# Unset means the bundled instance on loopback, which the searxng service
+# starts for exactly that case.
+bashio::config.has_value 'searxng_url' || export SEARXNG_URL="http://127.0.0.1:8888"
+
 export FEDERATION_ENABLED="$(bashio::config 'federation_enabled')"
 export FEDERATION_ALLOW_PRIVATE="$(bashio::config 'federation_allow_private')"
 if bashio::config.true 'federation_enabled' \

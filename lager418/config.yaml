@@ -1,5 +1,5 @@
 name: LAGER418
-version: "0.1.59"
+version: "0.1.60"
 slug: lager418
 description: Werkstatt-Inventar — Lager, Projekte, Leihe
 url: https://github.com/layer418/lager418-addon
@@ -36,8 +36,9 @@ schema:
   anthropic_key: password?
   anthropic_vision_model: str?
   jev_api_key: password?
-  # Part research: an OpenAI-compatible chat endpoint plus a SearXNG instance.
-  # Both must be set or the Recherchieren button stays hidden.
+  # Part research: an OpenAI-compatible chat endpoint. SearXNG ships with the
+  # add-on, so only the model options have to be set for the Recherchieren
+  # button to appear; searxng_url overrides the bundled instance with your own.
   searxng_url: url?
   research_base_url: url?
   research_api_key: password?

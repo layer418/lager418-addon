@@ -18,8 +18,8 @@ Then open **Lager** from the sidebar.
 | `federation_enabled` | Expose `/api/federation/*` so other LAGER418 hosts can browse shared parts and run transfers. Off by default. |
 | `federation_base_url` | The URL peers reach this instance on. Required when federation is enabled. |
 | `federation_allow_private` | Accept peer URLs on loopback/LAN. Needed for LAN-only pairing, never for a publicly exposed instance. |
-| `searxng_url` | SearXNG instance used by the research agent. Empty hides the Recherchieren button. |
-| `research_base_url` | OpenAI-compatible chat endpoint for the research agent. Empty hides the button. |
+| `searxng_url` | Nur nötig, wenn du eine eigene SearXNG-Instanz benutzen willst. Leer = die mitgelieferte auf 127.0.0.1:8888. |
+| `research_base_url` | OpenAI-compatible chat endpoint for the research agent. Empty hides the Recherchieren button. |
 | `research_api_key` | Key for that endpoint. Leer lassen für ein lokales Modell ohne Schlüssel (Ollama, vLLM). |
 | `research_model` | Model id to use, e.g. `gpt-4o-mini` or `qwen2.5:14b`. |
 | `log_level` | Add-on log verbosity. |
@@ -31,38 +31,29 @@ Datenblatt, Hersteller, Herstellernummer und Preis und schlägt die Funde zur
 Übernahme vor. Übernommen wird nur, was angehakt wird; jeder Lauf bleibt als
 Protokoll am Bauteil stehen.
 
-Dafür braucht er zwei Dinge:
+Dafür braucht er ein Sprachmodell — die Suchmaschine bringt das Add-on mit.
 
-**1. Eine Suchmaschine.** Installiere ein SearXNG-Add-on und trage seine Adresse
-unter `searxng_url` ein. Zwei Stolpersteine:
+**Die Suchmaschine.** Eine SearXNG-Instanz läuft im Add-on, erreichbar nur
+containerintern auf `127.0.0.1:8888`, mit eingeschaltetem JSON-Format. Es ist
+nichts einzurichten. Ihre Einstellungen stehen in `/data/searxng/settings.yml`;
+die Datei wird beim ersten Start angelegt (mit eigenem `secret_key`) und bei
+Updates nicht angefasst — dort lassen sich Engines ab- und zuschalten.
 
-- *Die Adresse.* Add-ons erreichen einander unter einem Hostnamen, den der
-  Supervisor vergibt — er enthält einen Präfix, der vom Repository abhängt, und
-  ist deshalb bei jeder Installation anders. Den richtigen Wert zeigt
-  `ha addons info <slug>` unter `hostname`, oder die Info-Seite des Add-ons.
-  Er sieht aus wie `http://<präfix>-searxng:8080`.
-- *Das JSON-Format.* SearXNG liefert standardmäßig **nur HTML**. In
-  `addon_configs/.../settings.yml` muss `json` in der Formatliste stehen:
+Du hast schon eine SearXNG-Instanz? Trage sie unter `searxng_url` ein, dann
+benutzt das Add-on die und startet die eigene gar nicht erst. Zwei Stolpersteine
+dabei: die Adresse eines anderen Add-ons enthält einen vom Supervisor
+vergebenen Präfix (`ha addons info <slug>` zeigt sie unter `hostname`, sie sieht
+aus wie `http://<präfix>-searxng:8080`), und deine Instanz muss `json` in
+`search.formats` stehen haben — sonst bricht jeder Lauf mit einem Suchfehler ab.
 
-  ```yaml
-  search:
-    formats:
-      - html
-      - json
-  ```
-
-  Fehlt es, kommt auf jede Suche eine HTML-Seite zurück und jeder Lauf bricht
-  mit einem Suchfehler im Protokoll ab.
-
-**2. Ein Sprachmodell.** `research_base_url` zeigt auf einen beliebigen
+**Das Sprachmodell.** `research_base_url` zeigt auf einen beliebigen
 OpenAI-kompatiblen Endpunkt — OpenAI, OpenRouter, Groq, Mistral, Together, oder
 ein lokales Ollama bzw. vLLM. Dazu `research_api_key` und `research_model`. Das
 Modell muss Tool-Calling beherrschen; sehr kleine lokale Modelle tun sich damit
 schwer.
 
-Fehlt eines von `searxng_url`, `research_base_url` oder `research_model`,
-erscheint der Knopf gar nicht erst; das Add-on-Log nennt dann, welche Option
-fehlt.
+Fehlt `research_base_url` oder `research_model`, erscheint der Knopf gar nicht
+erst; das Add-on-Log nennt dann, welche Option fehlt.
 
 Hinweis zur Sicherheit: Das Modell wählt selbst aus, welche Seiten gelesen
 werden. Adressen im eigenen Netz werden dabei grundsätzlich abgelehnt —

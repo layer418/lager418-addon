@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bashio
+# A SearXNG the user does not have to install, find the hostname of, or teach
+# the json format to. Point searxng_url at your own instance to use that one
+# instead — this service then stays out of the way.
+if bashio::config.has_value 'searxng_url'; then
+    bashio::log.info "searxng_url is set — built-in search engine not started"
+    # ponytail: idling instead of exiting, because s6 restarts a longrun that
+    # exits. Costs one sleep process.
+    exec sleep infinity
+fi
+
+SETTINGS=/data/searxng/settings.yml
+if [ ! -s "${SETTINGS}" ]; then
+    bashio::log.info "writing default searxng settings to ${SETTINGS}"
+    mkdir -p /data/searxng
+    cp /usr/share/lager418/searxng-settings.yml "${SETTINGS}"
+    sed -i "s/ultrasecretkey/$(head -c 24 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9')/" \
+        "${SETTINGS}"
+fi
+
+export SEARXNG_SETTINGS_PATH="${SETTINGS}"
+cd /opt/searxng || bashio::exit.nok "searxng payload missing"
+
+# ponytail: Flask's own server — one local client, a handful of queries a day.
+# Swap in granian if this ever serves anything but the research agent.
+exec ./venv/bin/python -m searx.webapp
