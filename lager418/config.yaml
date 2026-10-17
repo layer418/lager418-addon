@@ -1,5 +1,5 @@
 name: LAGER418
-version: "0.1.61"
+version: "0.1.62"
 slug: lager418
 description: Werkstatt-Inventar — Lager, Projekte, Leihe
 url: https://github.com/layer418/lager418-addon
@@ -22,12 +22,16 @@ services:
 # Photo exports and label PDFs land somewhere the user can actually get at.
 map:
   - share:rw
-# url-typed options are absent here on purpose: Supervisor's "?" means the key
-# may be missing, not that it may be empty — a default of "" goes straight into
-# vol.Url() and the add-on refuses to start with "expected a URL".
+# Every option a user is expected to set needs a default here: the HA UI hides
+# anything that has no stored value behind "show unused optional options".
+# That forces the two research URLs to be str? rather than url? below — an
+# empty default goes straight into vol.Url(), which rejects "" with
+# "expected a URL" and the add-on then refuses to start.
 options:
   anthropic_key: ""
   jev_api_key: ""
+  searxng_url: ""
+  research_base_url: ""
   research_api_key: ""
   research_model: ""
   federation_enabled: false
@@ -40,8 +44,10 @@ schema:
   # Part research: an OpenAI-compatible chat endpoint. SearXNG ships with the
   # add-on, so only the model options have to be set for the Recherchieren
   # button to appear; searxng_url overrides the bundled instance with your own.
-  searxng_url: url?
-  research_base_url: url?
+  # str?, not url?: these ship with an empty default so the UI shows them, and
+  # vol.Url() rejects "". The API validates what is actually entered.
+  searxng_url: str?
+  research_base_url: str?
   research_api_key: password?
   research_model: str?
   # Opens /api/federation/* to other hosts. base_url is required when enabled,
