@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.61
+
+- Add-on startet wieder: die leeren Vorgaben für `searxng_url` und
+  `research_base_url` ließen die Optionsprüfung mit *expected a URL*
+  scheitern. URL-Optionen haben jetzt gar keine Vorgabe — leer heißt
+  weggelassen.
+
 ## 0.1.60
 
 - SearXNG ist jetzt im Add-on enthalten und vorkonfiguriert (inklusive
