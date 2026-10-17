@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.62
+
+- `searxng_url` und `research_base_url` stehen wieder in der Optionsliste.
+  Seit 0.1.61 hatten sie keine Vorgabe mehr und die HA-Oberfläche versteckte
+  sie hinter *Nicht verwendete optionale Konfigurationsoptionen einblenden*.
+  Sie sind jetzt `str?` mit leerer Vorgabe — leer heißt weiterhin
+  „mitgelieferte SearXNG“ bzw. „Recherche aus“.
+
 ## 0.1.61
 
 - Add-on startet wieder: die leeren Vorgaben für `searxng_url` und
