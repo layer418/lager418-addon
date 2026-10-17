@@ -19,7 +19,25 @@ FROM ${BUILD_FROM}
 
 # ponytail: postgres major is pinned on purpose — an unpinned bump silently
 # orphans /data/pg. Changing it needs a pg_upgrade step here.
-RUN apk add --no-cache nodejs postgresql17 postgresql17-client
+RUN apk add --no-cache nodejs postgresql17 postgresql17-client python3
+
+# Bundled SearXNG, so the research agent needs no second add-on. Pinned to a
+# commit: upstream publishes no release tags, and an unpinned clone would make
+# every rebuild a different app. Every dep ships a musl wheel for both arches,
+# so --only-binary keeps a compiler out of this image — drop the flag and the
+# aarch64 build starts compiling lxml under qemu. The freeze step writes
+# searx/version_frozen.py — without it searx shells out to git on every import
+# and crashes in an image that has neither git nor a .git directory.
+ARG SEARXNG_REF=2a6fc07be3760543c7b6d1d1bfe62f5765d5d9d6
+RUN apk add --no-cache --virtual .searxng-build git py3-pip \
+    && git clone https://github.com/searxng/searxng.git /opt/searxng \
+    && git -C /opt/searxng checkout --detach "${SEARXNG_REF}" \
+    && python3 -m venv /opt/searxng/venv \
+    && /opt/searxng/venv/bin/pip install --no-cache-dir --only-binary :all: \
+        -r /opt/searxng/requirements.txt \
+    && (cd /opt/searxng && ./venv/bin/python -m searx.version freeze) \
+    && rm -rf /opt/searxng/.git \
+    && apk del .searxng-build
 
 COPY --from=api /app /opt/api
 COPY --from=web /app/.output /opt/web/.output

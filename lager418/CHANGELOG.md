@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.60
+
+- SearXNG ist jetzt im Add-on enthalten und vorkonfiguriert (inklusive
+  JSON-Format). Für die Bauteil-Recherche genügen damit die Modell-Optionen;
+  ein zweites Add-on und `searxng_url` braucht es nicht mehr.
+- `searxng_url` bleibt als Übersteuerung: gesetzt, benutzt das Add-on die
+  eigene Instanz und startet die mitgelieferte nicht.
+- Die Einstellungen der mitgelieferten Instanz liegen unter
+  `/data/searxng/settings.yml` und überleben Updates.
+
 ## 0.1.59
 
 - App-Update: api v0.1.17, web v0.4.49.

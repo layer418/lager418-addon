@@ -1,0 +1,18 @@
+# Template copied to /data/searxng/settings.yml on first boot; ultrasecretkey
+# is replaced there. Edit the copy, not this file — this one is overwritten by
+# every add-on update.
+use_default_settings: true
+server:
+  # Loopback only: the API talks to it over 127.0.0.1, nothing else may.
+  bind_address: "127.0.0.1"
+  port: 8888
+  secret_key: "ultrasecretkey"
+  # No bot detection — the only client is the research agent in this container.
+  limiter: false
+  public_instance: false
+  image_proxy: false
+search:
+  # json is why this is bundled at all; without it every research run fails.
+  formats:
+    - html
+    - json
