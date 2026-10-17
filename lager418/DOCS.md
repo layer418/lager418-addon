@@ -21,7 +21,8 @@ Then open **Lager** from the sidebar.
 | `searxng_url` | Nur nötig, wenn du eine eigene SearXNG-Instanz benutzen willst. Leer = die mitgelieferte auf 127.0.0.1:8888. |
 | `research_base_url` | OpenAI-compatible chat endpoint for the research agent. Empty hides the Recherchieren button. |
 | `research_api_key` | Key for that endpoint. Leer lassen für ein lokales Modell ohne Schlüssel (Ollama, vLLM). |
-| `research_model` | Model id to use, e.g. `gpt-4o-mini` or `qwen2.5:14b`. |
+| `research_model` | Model id to use, e.g. `claude-sonnet-5-5`, `gpt-4o-mini` oder `qwen2.5:14b`. |
+| `research_max_tokens` | Token-Budget pro Recherche-Lauf. `0` = kein Limit. |
 | `log_level` | Add-on log verbosity. |
 
 ## Bauteil-Recherche
@@ -47,10 +48,18 @@ aus wie `http://<präfix>-searxng:8080`), und deine Instanz muss `json` in
 `search.formats` stehen haben — sonst bricht jeder Lauf mit einem Suchfehler ab.
 
 **Das Sprachmodell.** `research_base_url` zeigt auf einen beliebigen
-OpenAI-kompatiblen Endpunkt — OpenAI, OpenRouter, Groq, Mistral, Together, oder
-ein lokales Ollama bzw. vLLM. Dazu `research_api_key` und `research_model`. Das
-Modell muss Tool-Calling beherrschen; sehr kleine lokale Modelle tun sich damit
-schwer.
+OpenAI-kompatiblen Endpunkt — OpenAI, OpenRouter, Groq, Mistral, Together,
+Anthropic (`https://api.anthropic.com/v1`), oder ein lokales Ollama bzw. vLLM.
+Dazu `research_api_key` und `research_model`. Das Modell muss Tool-Calling
+beherrschen; sehr kleine lokale Modelle tun sich damit schwer.
+
+**Was ein Lauf kosten darf.** `research_max_tokens` begrenzt, wie viele Token
+ein einzelner Lauf verbrauchen darf — gezählt über alle Modellaufrufe des Laufs
+hinweg, also so, wie der Anbieter abrechnet. Ist das Budget aufgebraucht, nimmt
+der Agent die Werkzeuge weg und fordert die Antwort an: der Lauf endet mit einem
+dünneren Vorschlag statt mit gar keinem. Dieser Abschlussaufruf wird noch
+abgerechnet, die tatsächliche Obergrenze ist also Budget plus ein Aufruf. `0`
+heißt kein Limit. Im Protokoll steht bei gesetztem Budget `N/BUDGET Token`.
 
 Fehlt `research_base_url` oder `research_model`, erscheint der Knopf gar nicht
 erst; das Add-on-Log nennt dann, welche Option fehlt.
