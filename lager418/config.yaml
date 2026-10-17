@@ -1,5 +1,5 @@
 name: LAGER418
-version: "0.1.60"
+version: "0.1.61"
 slug: lager418
 description: Werkstatt-Inventar — Lager, Projekte, Leihe
 url: https://github.com/layer418/lager418-addon
@@ -22,11 +22,12 @@ services:
 # Photo exports and label PDFs land somewhere the user can actually get at.
 map:
   - share:rw
+# url-typed options are absent here on purpose: Supervisor's "?" means the key
+# may be missing, not that it may be empty — a default of "" goes straight into
+# vol.Url() and the add-on refuses to start with "expected a URL".
 options:
   anthropic_key: ""
   jev_api_key: ""
-  searxng_url: ""
-  research_base_url: ""
   research_api_key: ""
   research_model: ""
   federation_enabled: false
