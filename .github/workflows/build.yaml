@@ -3,7 +3,6 @@ name: build
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
   workflow_call:
     inputs:
@@ -37,12 +36,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Push on a tag or when release.yml calls us; everything else is a
-      # build-only smoke test.
+      # Only release.yaml publishes; everything else is a build-only smoke
+      # test. A v* tag no longer triggers a build of its own — release.yaml
+      # tags after it has already pushed the images.
       - name: Set publish flag
         id: flags
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/v* || "${{ inputs.publish }}" == "true" ]]; then
+          if [[ "${{ inputs.publish }}" == "true" ]]; then
             echo "test=" >> "$GITHUB_OUTPUT"
           else
             echo "test=--test" >> "$GITHUB_OUTPUT"

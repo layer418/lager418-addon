@@ -1,7 +1,9 @@
 name: release on app update
 
 # The app repos' prod CI pings us with a repository_dispatch after it pushes
-# a v* image. We bump build.yaml + config.yaml, tag, and publish the add-on.
+# a v* image. We bump build.yaml + config.yaml on a staging branch, build and
+# push the images, and only then move main + the tag — main is what Supervisor
+# reads, so a version must never appear there before its images exist.
 on:
   repository_dispatch:
     types: [app-release]
@@ -12,6 +14,12 @@ on:
       web_version:
         description: 'web tag, e.g. v0.4.6 (empty = keep)'
 
+# Two dispatches seconds apart both bumped to the same version and the loser's
+# push was rejected, dropping its release. Queue them instead.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   bump:
     runs-on: ubuntu-latest
@@ -20,6 +28,10 @@ jobs:
     outputs:
       changed: ${{ steps.bump.outputs.changed }}
       tag: ${{ steps.bump.outputs.tag }}
+    env:
+      # Fixed name, force-pushed: a failed build leaves at most this one branch
+      # behind, and the next run overwrites it.
+      STAGING: release-staging
     steps:
       - uses: actions/checkout@v4
 
@@ -60,8 +72,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git commit -am "chore: api $api, web $web (release $version)"
-          git tag "v$version"
-          git push origin HEAD --tags
+          git push --force origin "HEAD:refs/heads/$STAGING"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
@@ -74,4 +85,26 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       publish: true
-      ref: ${{ needs.bump.outputs.tag }}
+      ref: release-staging
+
+  # Images are in the registry now, so main may advertise the version.
+  promote:
+    needs: [bump, build]
+    if: needs.bump.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - env:
+          TAG: ${{ needs.bump.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git fetch origin release-staging
+          sha=$(git rev-parse FETCH_HEAD)
+          git tag "$TAG" "$sha"
+          # ponytail: plain fast-forward — a human push to main during the
+          # ~4min build makes this fail loudly, rerun the job after rebasing.
+          git push origin "$sha:main" "$TAG"
+          git push origin --delete release-staging
