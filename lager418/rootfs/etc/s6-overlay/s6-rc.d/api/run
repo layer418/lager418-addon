@@ -20,7 +20,8 @@ for opt in anthropic_key:ANTHROPIC_API_KEY \
            research_api_key:RESEARCH_API_KEY \
            research_model:RESEARCH_MODEL \
            research_max_tokens:RESEARCH_MAX_TOKENS \
-           federation_base_url:FEDERATION_BASE_URL; do
+           federation_base_url:FEDERATION_BASE_URL \
+           cups_server:CUPS_SERVER; do
     if bashio::config.has_value "${opt%%:*}"; then
         export "${opt##*:}=$(bashio::config "${opt%%:*}")"
     fi

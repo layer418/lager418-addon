@@ -19,7 +19,9 @@ FROM ${BUILD_FROM}
 
 # ponytail: postgres major is pinned on purpose — an unpinned bump silently
 # orphans /data/pg. Changing it needs a pg_upgrade step here.
-RUN apk add --no-cache nodejs postgresql17 postgresql17-client python3
+# cups-client = lp/lpstat/lpoptions. The label printer lives on another host's
+# CUPS (there is none in this container); CUPS_SERVER points the CLI at it.
+RUN apk add --no-cache nodejs postgresql17 postgresql17-client python3 cups-client
 
 # Bundled SearXNG, so the research agent needs no second add-on. Pinned to a
 # commit: upstream publishes no release tags, and an unpinned clone would make

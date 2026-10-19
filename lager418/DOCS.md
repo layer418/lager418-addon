@@ -23,6 +23,7 @@ Then open **Lager** from the sidebar.
 | `research_api_key` | Key for that endpoint. Leer lassen für ein lokales Modell ohne Schlüssel (Ollama, vLLM). |
 | `research_model` | Model id to use, e.g. `claude-sonnet-5-5`, `gpt-4o-mini` oder `qwen2.5:14b`. |
 | `research_max_tokens` | Token-Budget pro Recherche-Lauf. `0` = kein Limit. |
+| `cups_server` | Netzwerk-CUPS mit dem Etikettendrucker, z.B. `192.168.1.20` oder `192.168.1.20:631`. Leer = kein Direktdruck, Etiketten gehen über den Browser-Druckdialog. |
 | `log_level` | Add-on log verbosity. |
 
 ## Bauteil-Recherche

@@ -37,6 +37,7 @@ options:
   research_max_tokens: 0
   federation_enabled: false
   federation_allow_private: false
+  cups_server: ""
   log_level: info
 schema:
   anthropic_key: password?
@@ -58,4 +59,7 @@ schema:
   federation_enabled: bool
   federation_base_url: url?
   federation_allow_private: bool
+  # Netzwerk-CUPS mit dem Etikettendrucker, z.B. "192.168.1.20" oder
+  # "192.168.1.20:631". Leer = kein Direktdruck über CUPS.
+  cups_server: str?
   log_level: list(trace|debug|info|notice|warning|error|fatal)
