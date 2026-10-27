@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Docker bewusst nicht konfiguriert: alle FROMs im Add-on-Dockerfile sind
+  # ARG-basiert (BUILD_FROM, API_IMAGE:API_VERSION, …) und für Dependabot nicht
+  # auflösbar. Base-Images werden über build.yaml gepflegt.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(ci)"
