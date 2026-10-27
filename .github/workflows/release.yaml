@@ -34,6 +34,11 @@ jobs:
       STAGING: release-staging
     steps:
       - uses: actions/checkout@v4
+        # repository_dispatch pins github.sha to main as it was when the app
+        # repo pinged us; a queued second dispatch would otherwise re-bump from
+        # a stale main and collide with the tag the first run just pushed.
+        with:
+          ref: main
 
       - id: bump
         env:
@@ -96,6 +101,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        # same reason as in bump: github.sha may be a stale main
+        with:
+          ref: main
 
       - env:
           TAG: ${{ needs.bump.outputs.tag }}
